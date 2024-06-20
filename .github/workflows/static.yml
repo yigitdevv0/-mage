@@ -1,0 +1,43 @@
+# GitHub Sayfalarına statik içerik dağıtmak için basit iş akışı
+isim: Sayfalara statik içerik dağıtma
+
+üzerinde:
+  # Varsayılan dalı hedefleyen basmalarda çalışır
+ itmek:
+ dalları: ["ana"]
+
+  # Bu iş akışını İşlemler sekmesinden manuel olarak çalıştırmanızı sağlar
+ workflow_dispatch:
+
+# GitHub Sayfalarına konuşlandırmaya izin vermek için GITHUB_TOKEN izinlerini ayarlar
+izinler:
+ içerik: okumak
+ sayfalar: yazmak
+ id-token: yazmak
+
+# Sadece bir eşzamanlı konuşlandırmaya izin verin, devam eden çalışma ile en son kuyruk arasında sıralanan çalışmaları atlayın.
+# Ancak, bu üretim dağıtımlarının tamamlanmasına izin vermek istediğimiz için devam eden çalışmaları iptal ETMEYİN.
+eşzamanlılık:
+ grup: "sayfalar"
+ devam etmekte olan iptal: yanlış
+
+işler:
+  # Sadece konuşlandırdığımızdan beri tek dağıtım işi
+ dağıtmak:
+ çevre:
+ isim: github sayfaları
+ URL: ${{ steps.deployment.outputs.page_url }}
+ çalışır: ubuntu-son
+ adımlar:
+      - isim: Çıkış
+ kullanır: eylemler / checkout @ v4
+      - isim: Sayfaları Ayarla
+ kullanır: actions / configure-pages @ v5
+      - isim: Artefaktı yükle
+ kullanır: eylemler / upload-pages-artifact @ v3
+ ile:
+          # Deponun tamamını yükle
+ yol: '.'
+      - isim: GitHub Sayfalarına Dağıtım
+ kimlik: dağıtım
+ kullanır: actions / deploy-pages @ v4
